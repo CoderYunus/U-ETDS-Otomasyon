@@ -1,6 +1,6 @@
 import { ParseResponse, Passenger, SubmitResponse } from "../types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+const API_BASE_URL = "https://u-etds-otomasyon.onrender.com/api";
 
 const getAuthHeaders = () => {
   const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
