@@ -18,7 +18,7 @@ public class AiIntegrationService
                   ?? "";
     }
 
-    public async Task<AiParseResult> AnalyzeTextAsync(string rawText)
+    public async Task<AiParseResult> AnalyzeTextAsync(string rawText, string? imageBase64 = null)
     {
         if (string.IsNullOrEmpty(_apiKey))
         {
@@ -27,7 +27,7 @@ public class AiIntegrationService
 
         var url = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={_apiKey}";
 
-        var prompt = @"Aşağıdaki metinden yolcu ve sefer bilgilerini çıkar ve sadece geçerli bir JSON formatında döndür. TC/Pasaport no için 11 hane kuralı arama, harf ve rakam karışık olabilir. Cinsiyet bilgisi için Erkek ise 'E', Kadın ise 'K' yaz. JSON harici hiçbir şey yazma. Şablon:
+        var prompt = @"Aşağıdaki metinden veya görselden yolcu ve sefer bilgilerini çıkar ve sadece geçerli bir JSON formatında döndür. Görselde bir tablo varsa onu oku. TC/Pasaport no için 11 hane kuralı arama, harf ve rakam karışık olabilir. Cinsiyet bilgisi için Erkek ise 'E', Kadın ise 'K' yaz. JSON harici hiçbir şey yazma. Şablon:
 {
   ""passengers"": [
     { ""tc_no"": """", ""first_name"": """", ""last_name"": """", ""gender"": ""E veya K"", ""nationality"": ""TR"", ""phone"": """" }
@@ -38,19 +38,38 @@ public class AiIntegrationService
 }
 
 Metin:
-" + rawText;
+" + (string.IsNullOrWhiteSpace(rawText) ? "(Metin girilmedi, sadece görsel üzerinden oku)" : rawText);
+
+        var partsList = new List<object> { new { text = prompt } };
+
+        if (!string.IsNullOrWhiteSpace(imageBase64))
+        {
+            var commaIndex = imageBase64.IndexOf(',');
+            var mimeType = "image/jpeg";
+            var base64Data = imageBase64;
+            
+            if (commaIndex > 0 && imageBase64.StartsWith("data:"))
+            {
+                var prefix = imageBase64.Substring(5, commaIndex - 5);
+                mimeType = prefix.Split(';')[0];
+                base64Data = imageBase64.Substring(commaIndex + 1);
+            }
+            
+            partsList.Add(new
+            {
+                inlineData = new
+                {
+                    mimeType = mimeType,
+                    data = base64Data
+                }
+            });
+        }
 
         var payload = new
         {
             contents = new[]
             {
-                new
-                {
-                    parts = new[]
-                    {
-                        new { text = prompt }
-                    }
-                }
+                new { parts = partsList.ToArray() }
             }
         };
 

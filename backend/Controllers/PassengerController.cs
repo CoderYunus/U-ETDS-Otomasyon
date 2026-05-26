@@ -25,10 +25,10 @@ public class PassengerController : ControllerBase
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(request.RawText))
-                return BadRequest(new { success = false, message = "Metin boş olamaz." });
+            if (string.IsNullOrWhiteSpace(request.RawText) && string.IsNullOrWhiteSpace(request.ImageBase64))
+                return BadRequest(new { success = false, message = "Metin veya görsel boş olamaz." });
 
-            var result = await _aiService.AnalyzeTextAsync(request.RawText);
+            var result = await _aiService.AnalyzeTextAsync(request.RawText, request.ImageBase64);
             
             return Ok(new { success = true, data = result.Passengers, tripDetails = result.TripDetails });
         }
