@@ -25,7 +25,7 @@ public class AiIntegrationService
             throw new Exception("Gemini API anahtarı bulunamadı! Lütfen Render'a GEMINI_API_KEY ekleyin.");
         }
 
-        var url = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={_apiKey}";
+        var url = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={_apiKey}";
 
         var prompt = @"Aşağıdaki metinden yolcu ve sefer bilgilerini çıkar ve sadece geçerli bir JSON formatında döndür. JSON harici hiçbir şey yazma. Şablon:
 {
