@@ -110,6 +110,17 @@ try
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         dbContext.Database.EnsureCreated();
+        
+        try
+        {
+            dbContext.Database.ExecuteSqlRaw("ALTER TABLE \"Passengers\" ALTER COLUMN \"TcNo\" TYPE character varying(50);");
+            dbContext.Database.ExecuteSqlRaw("ALTER TABLE \"Passengers\" ADD COLUMN IF NOT EXISTS \"Gender\" text DEFAULT '';");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Warning: Could not alter Passengers table. It might already be up to date. " + ex.Message);
+        }
+        
         Console.WriteLine("Database ensures created successfully.");
     }
 }

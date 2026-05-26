@@ -34,10 +34,10 @@ export default function Home() {
   };
 
   const handleSubmit = async () => {
-    // Geçerlilik kontrolü
-    const hasInvalidTc = passengers.some(p => !p.tcNo || p.tcNo.length !== 11 || !/^\d+$/.test(p.tcNo));
+    // Geçerlilik kontrolü (Sadece boş olup olmadığına bak, uzunluk veya rakam kontrolünü kaldırdık)
+    const hasInvalidTc = passengers.some(p => !p.tcNo || p.tcNo.trim() === "");
     if (hasInvalidTc) {
-      setMessage({ text: "Hatalı TC Kimlik Numarası girişleri mevcut. Lütfen tabloyu düzeltin.", type: "error" });
+      setMessage({ text: "Hatalı veya eksik Kimlik/Pasaport Numarası girişleri mevcut. Lütfen tabloyu düzeltin.", type: "error" });
       return;
     }
 

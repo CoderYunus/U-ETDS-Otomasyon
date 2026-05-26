@@ -12,7 +12,7 @@ export default function DataTable({ passengers, setPassengers }: DataTableProps)
     setPassengers(updated);
   };
 
-  const isTcValid = (tc: string) => tc && tc.length === 11 && /^\d+$/.test(tc);
+  const isTcValid = (tc: string) => tc && tc.trim() !== "";
 
   if (passengers.length === 0) {
     return (
@@ -27,16 +27,25 @@ export default function DataTable({ passengers, setPassengers }: DataTableProps)
       <table className="min-w-full text-sm text-left text-gray-600">
         <thead className="bg-gray-50 text-gray-700 uppercase font-semibold">
           <tr>
+            <th className="px-6 py-4 border-b">Ülke</th>
             <th className="px-6 py-4 border-b">Adı</th>
             <th className="px-6 py-4 border-b">Soyadı</th>
-            <th className="px-6 py-4 border-b">Uyruk</th>
-            <th className="px-6 py-4 border-b">TC/Pasaport No</th>
+            <th className="px-6 py-4 border-b">TC / Pasaport No</th>
+            <th className="px-6 py-4 border-b">Cinsiyet</th>
             <th className="px-6 py-4 border-b">Telefon</th>
           </tr>
         </thead>
         <tbody>
           {passengers.map((p, idx) => (
             <tr key={idx} className="border-b hover:bg-gray-50 transition-colors">
+              <td className="p-2">
+                <input
+                  type="text"
+                  value={p.nationality}
+                  onChange={(e) => handleChange(idx, "nationality", e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primary w-20"
+                />
+              </td>
               <td className="p-2">
                 <input
                   type="text"
@@ -56,19 +65,21 @@ export default function DataTable({ passengers, setPassengers }: DataTableProps)
               <td className="p-2">
                 <input
                   type="text"
-                  value={p.nationality}
-                  onChange={(e) => handleChange(idx, "nationality", e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primary w-20"
+                  value={p.tcNo}
+                  onChange={(e) => handleChange(idx, "tcNo", e.target.value)}
+                  className={`w-full p-2 border rounded focus:outline-none focus:ring-1 focus:ring-primary ${!isTcValid(p.tcNo) ? 'table-cell-error' : 'border-gray-300'}`}
+                  maxLength={50}
+                  placeholder="TC / Pasaport"
                 />
               </td>
               <td className="p-2">
                 <input
                   type="text"
-                  value={p.tcNo}
-                  onChange={(e) => handleChange(idx, "tcNo", e.target.value)}
-                  className={`w-full p-2 border rounded focus:outline-none focus:ring-1 focus:ring-primary ${!isTcValid(p.tcNo) ? 'table-cell-error' : 'border-gray-300'}`}
-                  maxLength={11}
-                  placeholder="TC / Pasaport"
+                  value={p.gender || ""}
+                  onChange={(e) => handleChange(idx, "gender", e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primary w-16"
+                  placeholder="E/K"
+                  maxLength={1}
                 />
               </td>
               <td className="p-2">

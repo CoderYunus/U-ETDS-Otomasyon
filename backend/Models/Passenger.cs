@@ -8,8 +8,10 @@ public class Passenger
     public int Id { get; set; }
     
     [Required]
-    [StringLength(11)]
+    [StringLength(50)]
     public string TcNo { get; set; } = string.Empty;
+    
+    public string Gender { get; set; } = string.Empty;
     
     [Required]
     public string FirstName { get; set; } = string.Empty;

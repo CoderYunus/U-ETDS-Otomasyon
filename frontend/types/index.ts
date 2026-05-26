@@ -2,6 +2,7 @@ export interface Passenger {
   tcNo: string;
   firstName: string;
   lastName: string;
+  gender?: string;
   nationality: string;
   phone: string;
 }

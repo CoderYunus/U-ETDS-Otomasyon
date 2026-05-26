@@ -27,10 +27,10 @@ public class AiIntegrationService
 
         var url = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={_apiKey}";
 
-        var prompt = @"Aşağıdaki metinden yolcu ve sefer bilgilerini çıkar ve sadece geçerli bir JSON formatında döndür. JSON harici hiçbir şey yazma. Şablon:
+        var prompt = @"Aşağıdaki metinden yolcu ve sefer bilgilerini çıkar ve sadece geçerli bir JSON formatında döndür. TC/Pasaport no için 11 hane kuralı arama, harf ve rakam karışık olabilir. Cinsiyet bilgisi için Erkek ise 'E', Kadın ise 'K' yaz. JSON harici hiçbir şey yazma. Şablon:
 {
   ""passengers"": [
-    { ""tc_no"": """", ""first_name"": """", ""last_name"": """", ""nationality"": ""TR"", ""phone"": """" }
+    { ""tc_no"": """", ""first_name"": """", ""last_name"": """", ""gender"": ""E veya K"", ""nationality"": ""TR"", ""phone"": """" }
   ],
   ""trip_details"": {
     ""departure_city"": """", ""departure_district"": """", ""arrival_city"": """", ""arrival_district"": """", ""description"": """"
@@ -86,6 +86,7 @@ Metin:
                     TcNo = p.Tc_No ?? "",
                     FirstName = p.First_Name ?? "",
                     LastName = p.Last_Name ?? "",
+                    Gender = p.Gender ?? "",
                     Nationality = p.Nationality ?? "TR",
                     Phone = p.Phone ?? ""
                 });
@@ -140,6 +141,7 @@ Metin:
         public string Tc_No { get; set; } = string.Empty;
         public string First_Name { get; set; } = string.Empty;
         public string Last_Name { get; set; } = string.Empty;
+        public string Gender { get; set; } = string.Empty;
         public string Nationality { get; set; } = "TR";
         public string Phone { get; set; } = string.Empty;
     }
