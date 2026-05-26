@@ -1,35 +1,80 @@
 using System.Text;
 using System.Text.Json;
 using backend.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace backend.Services;
 
 public class AiIntegrationService
 {
     private readonly HttpClient _httpClient;
-    private readonly IConfiguration _configuration;
+    private readonly string _apiKey;
 
     public AiIntegrationService(HttpClient httpClient, IConfiguration configuration)
     {
         _httpClient = httpClient;
-        _configuration = configuration;
-        var baseUrl = _configuration.GetValue<string>("AiService:BaseUrl") ?? "http://127.0.0.1:8000";
-        _httpClient.BaseAddress = new Uri(baseUrl);
+        _apiKey = configuration.GetValue<string>("GEMINI_API_KEY") 
+                  ?? Environment.GetEnvironmentVariable("GEMINI_API_KEY") 
+                  ?? "";
     }
 
     public async Task<AiParseResult> AnalyzeTextAsync(string rawText)
     {
-        var payload = new { text = rawText };
+        if (string.IsNullOrEmpty(_apiKey))
+        {
+            throw new Exception("Gemini API anahtarı bulunamadı! Lütfen Render'a GEMINI_API_KEY ekleyin.");
+        }
+
+        var url = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={_apiKey}";
+
+        var prompt = @"Aşağıdaki metinden yolcu ve sefer bilgilerini çıkar ve sadece geçerli bir JSON formatında döndür. JSON harici hiçbir şey yazma. Şablon:
+{
+  ""passengers"": [
+    { ""tc_no"": """", ""first_name"": """", ""last_name"": """", ""nationality"": ""TR"", ""phone"": """" }
+  ],
+  ""trip_details"": {
+    ""departure_city"": """", ""departure_district"": """", ""arrival_city"": """", ""arrival_district"": """", ""description"": """"
+  }
+}
+
+Metin:
+" + rawText;
+
+        var payload = new
+        {
+            contents = new[]
+            {
+                new
+                {
+                    parts = new[]
+                    {
+                        new { text = prompt }
+                    }
+                }
+            }
+        };
+
         var jsonPayload = JsonSerializer.Serialize(payload);
         var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
-        var response = await _httpClient.PostAsync("/analyze-text", content);
+        var response = await _httpClient.PostAsync(url, content);
         response.EnsureSuccessStatusCode();
 
         var responseString = await response.Content.ReadAsStringAsync();
         
-        // AI servisinden dönen format: { "passengers": [ { "tc_no": "...", ... } ] }
-        var result = JsonSerializer.Deserialize<AiServiceResponse>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        using var doc = JsonDocument.Parse(responseString);
+        var root = doc.RootElement;
+        
+        var textContent = root.GetProperty("candidates")[0]
+                              .GetProperty("content")
+                              .GetProperty("parts")[0]
+                              .GetProperty("text").GetString();
+
+        if (textContent == null) throw new Exception("AI yanıt veremedi.");
+        
+        textContent = textContent.Replace("```json", "").Replace("```", "").Trim();
+
+        var result = JsonSerializer.Deserialize<AiServiceResponse>(textContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         
         var passengers = new List<Passenger>();
         if (result?.Passengers != null)
