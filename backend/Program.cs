@@ -89,12 +89,7 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-// Veritabanını otomatik olarak oluştur (Geliştirme için pratik bir yöntem)
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.EnsureCreated();
-}
+// (Removed auto-create duplicate block)
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -108,11 +103,18 @@ app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 
-using (var scope = app.Services.CreateScope())
+try 
 {
-    var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<AppDbContext>();
-    context.Database.EnsureCreated();
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        dbContext.Database.EnsureCreated();
+        Console.WriteLine("Database ensures created successfully.");
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine("Database creation failed: " + ex.Message);
 }
 
 app.MapControllers();
