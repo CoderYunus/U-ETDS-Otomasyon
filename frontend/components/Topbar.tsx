@@ -26,8 +26,9 @@ export default function Topbar({ onSubmitToUetds, isSubmitting, passengerCount, 
   const handleDownloadExcel = () => {
     // xlsx kütüphanesini dinamik yükleyelim (tarayıcıda çalışması için)
     import("xlsx").then((XLSX) => {
-      // Başlıklar tam olarak şablondaki (sablon-excel.pdf) gibi olmalı
-      const header = ["ÜLKE", "ADI", "SOYADI", "TC KİMLİK /PASAPORT NO", "CİNSİYET", "TELEFON", "HES KODU"];
+      // Başlıklar tam olarak şablondaki (sablon-excel.pdf) gibi olmalı. 
+      // DİKKAT: CİNSİYET değil CINSIYET olmalı!
+      const header = ["ÜLKE", "ADI", "SOYADI", "TC KİMLİK /PASAPORT NO", "CINSIYET", "TELEFON", "HES KODU"];
       
       const rows = passengers.map(p => {
         const ulke = p.nationality ? p.nationality.toUpperCase() : "TR";
@@ -48,7 +49,9 @@ export default function Topbar({ onSubmitToUetds, isSubmitting, passengerCount, 
 
       const worksheet = XLSX.utils.aoa_to_sheet([header, ...rows]);
       const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Yolcular");
+      
+      // E-Devlet "YOLCULAR" sayfasını arıyor olabilir, büyük harf yapıyoruz.
+      XLSX.utils.book_append_sheet(workbook, worksheet, "YOLCULAR");
 
       XLSX.writeFile(workbook, "yolcular.xlsx");
     });
