@@ -1,6 +1,15 @@
+"use client";
+
 import Link from "next/link";
+import { useState, useEffect } from "react";
 
 export default function Sidebar() {
+  const [role, setRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    setRole(localStorage.getItem("role"));
+  }, []);
+
   return (
     <>
     <div className="w-64 bg-surface-light border-r border-gray-200 h-screen hidden md:flex md:flex-col">
@@ -18,12 +27,14 @@ export default function Sidebar() {
               Akıllı Veri Girişi
             </li>
           </Link>
-          <Link href="/admin">
-            <li className="px-6 py-3 text-gray-600 hover:bg-blue-50 hover:text-primary cursor-pointer flex items-center transition-colors">
-              <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-              Yönetim Paneli
-            </li>
-          </Link>
+          {role === "Admin" && (
+            <Link href="/admin">
+              <li className="px-6 py-3 text-gray-600 hover:bg-blue-50 hover:text-primary cursor-pointer flex items-center transition-colors">
+                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                Yönetim Paneli
+              </li>
+            </Link>
+          )}
           <button 
             onClick={() => {
               if(typeof window !== 'undefined'){
@@ -44,9 +55,13 @@ export default function Sidebar() {
       <div className="p-6 border-t border-gray-200 bg-gray-50 flex flex-col items-center">
         <p className="text-xs text-gray-400 mb-4 font-semibold uppercase tracking-widest">Powered By</p>
         <div className="flex items-center space-x-4">
-          <img src="/byzon.svg" alt="Byzon" className="h-20 w-auto object-contain" />
+          <a href="https://www.linkedin.com/company/byzon-technologies/?viewAsMember=true" target="_blank" rel="noopener noreferrer">
+            <img src="/byzon.svg" alt="Byzon" className="h-20 w-auto object-contain cursor-pointer hover:opacity-80 transition-opacity" />
+          </a>
           <span className="text-xl font-bold text-gray-300">&</span>
-          <img src="/zmr.svg" alt="ZMR" className="h-8 w-auto object-contain" />
+          <a href="https://www.instagram.com/zmrtravel/" target="_blank" rel="noopener noreferrer">
+            <img src="/zmr.svg" alt="ZMR" className="h-8 w-auto object-contain cursor-pointer hover:opacity-80 transition-opacity" />
+          </a>
         </div>
         <p className="text-sm text-gray-600 mt-4 font-bold">Byzon & ZMR Travel</p>
       </div>
@@ -60,12 +75,14 @@ export default function Sidebar() {
           <span className="text-[10px] font-medium">Veri Girişi</span>
         </div>
       </Link>
-      <Link href="/admin">
-        <div className="flex flex-col items-center text-gray-600 hover:text-primary">
-          <svg className="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-          <span className="text-[10px] font-medium">Yönetim</span>
-        </div>
-      </Link>
+      {role === "Admin" && (
+        <Link href="/admin">
+          <div className="flex flex-col items-center text-gray-600 hover:text-primary">
+            <svg className="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+            <span className="text-[10px] font-medium">Yönetim</span>
+          </div>
+        </Link>
+      )}
       <button 
         onClick={() => {
           if(typeof window !== 'undefined'){

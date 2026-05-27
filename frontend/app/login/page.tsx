@@ -36,7 +36,9 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8 border border-gray-100">
         <div className="flex justify-center mb-8">
-          <img src="/byzon.svg" alt="BYZON Technologies" className="h-32 w-auto object-contain" />
+          <a href="https://www.linkedin.com/company/byzon-technologies/?viewAsMember=true" target="_blank" rel="noopener noreferrer">
+            <img src="/byzon.svg" alt="BYZON Technologies" className="h-32 w-auto object-contain hover:opacity-80 transition-opacity" />
+          </a>
         </div>
         
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-8">
@@ -90,9 +92,13 @@ export default function LoginPage() {
         <div className="mt-8 text-center border-t border-gray-100 pt-6 flex flex-col items-center">
           <p className="text-xs text-gray-400 font-semibold mb-2 uppercase tracking-widest">Powered By</p>
           <div className="flex items-center space-x-3 justify-center">
-             <img src="/byzon.svg" alt="Byzon" className="h-25 w-auto" />
+             <a href="https://www.linkedin.com/company/byzon-technologies/?viewAsMember=true" target="_blank" rel="noopener noreferrer">
+               <img src="/byzon.svg" alt="Byzon" className="h-25 w-auto hover:opacity-80 transition-opacity" />
+             </a>
              <span className="text-gray-300">&</span>
-             <img src="/zmr.svg" alt="ZMR" className="h-12 w-auto" />
+             <a href="https://www.instagram.com/zmrtravel/" target="_blank" rel="noopener noreferrer">
+               <img src="/zmr.svg" alt="ZMR" className="h-12 w-auto hover:opacity-80 transition-opacity" />
+             </a>
           </div>
         </div>
       </div>
