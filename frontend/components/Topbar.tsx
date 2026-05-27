@@ -24,17 +24,36 @@ export default function Topbar({ onSubmitToUetds, isSubmitting, passengerCount, 
     return text.replace(/[çÇğĞıİöÖşŞüÜ]/g, match => trMap[match]).toUpperCase(); // UETDS sistemi genelde büyük harf tercih eder
   };
 
-  const handleDownloadExcel = () => {
-    // xlsx kütüphanesini dinamik yükleyelim (tarayıcıda çalışması için)
-    import("xlsx").then((XLSX) => {
-      // 1. YOLCULAR Sayfası
-      const header = ["ÜLKE", "ADI", "SOYADI", "TC KİMLİK /PASAPORT NO", "CINSIYET", "TELEFON", "HES KODU"];
+  const handleDownloadExcel = async () => {
+    try {
+      // 1. Orijinal şablonu public klasöründen çek
+      const response = await fetch('/sablon.xlsx');
+      if (!response.ok) throw new Error("Şablon dosyası bulunamadı.");
+      const arrayBuffer = await response.arrayBuffer();
+
+      // 2. xlsx kütüphanesini dinamik yükle
+      const XLSX = await import("xlsx");
       
-      const rows = passengers.map(p => {
+      // 3. Şablonu belleğe oku
+      const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+      
+      // 4. E-Devletin aradığı o kritik YOLCULAR sayfasını bul
+      const sheetName = "YOLCULAR";
+      const worksheet = workbook.Sheets[sheetName];
+      
+      if (!worksheet) throw new Error("Şablonda YOLCULAR sayfası bulunamadı.");
+
+      // Mevcut verileri (başlıkları) diziye çevir
+      const data = XLSX.utils.sheet_to_json<any[]>(worksheet, { header: 1 });
+      
+      // Şablonun ilk satırı başlıktır, biz 2. satırdan (index 1) itibaren yolcuları ekleyeceğiz
+      const basliklar = data.length > 0 ? data[0] : ["ÜLKE", "ADI", "SOYADI", "TC KİMLİK /PASAPORT NO", "CINSIYET", "TELEFON", "HES KODU"];
+      
+      const newRows = passengers.map(p => {
         const ulke = p.nationality ? p.nationality.toUpperCase() : "TR";
         const ad = p.firstName ? p.firstName.toUpperCase() : "";
         const soyad = p.lastName ? p.lastName.toUpperCase() : "";
-        const cinsiyet = p.gender && p.gender.toUpperCase() === "K" ? "K" : "E"; // Varsayılan E
+        const cinsiyet = p.gender && p.gender.toUpperCase() === "K" ? "K" : "E";
         
         return [
           ulke,
@@ -47,26 +66,20 @@ export default function Topbar({ onSubmitToUetds, isSubmitting, passengerCount, 
         ];
       });
 
-      const yolcularSheet = XLSX.utils.aoa_to_sheet([header, ...rows]);
-      const workbook = XLSX.utils.book_new();
+      // Eski verilerin üstüne yeni yolcuları ekleyerek taze sayfayı oluştur
+      const finalData = [basliklar, ...newRows];
+      const newWorksheet = XLSX.utils.aoa_to_sheet(finalData);
       
-      // E-Devlet sırasıyla bu sayfaları arıyor
-      XLSX.utils.book_append_sheet(workbook, yolcularSheet, "YOLCULAR");
+      // Eski sayfayı yenisiyle değiştir
+      workbook.Sheets[sheetName] = newWorksheet;
 
-      // 2. CİNSİYET Sayfası
-      if (cinsiyetData && cinsiyetData.length > 0) {
-        const cinsiyetSheet = XLSX.utils.aoa_to_sheet(cinsiyetData);
-        XLSX.utils.book_append_sheet(workbook, cinsiyetSheet, "CİNSİYET");
-      }
-
-      // 3. ÜLKE KODLARI Sayfası
-      if (ulkeKodlariData && ulkeKodlariData.length > 0) {
-        const ulkeSheet = XLSX.utils.aoa_to_sheet(ulkeKodlariData);
-        XLSX.utils.book_append_sheet(workbook, ulkeSheet, "ÜLKE KODLARI");
-      }
-
+      // 5. Dosyayı indir (Dosyanın geri kalanı tamamen dokunulmamış şablondur)
       XLSX.writeFile(workbook, "yolcular.xlsx");
-    });
+
+    } catch (error) {
+      console.error("Excel oluşturulurken hata:", error);
+      alert("Excel oluşturulurken bir hata oluştu.");
+    }
   };
 
   return (
