@@ -1,5 +1,5 @@
 import { Passenger } from "@/types";
-import { cinsiyetData, ulkeKodlariData } from "@/utils/excelTemplateData";
+import { useState, useRef } from "react";
 
 interface TopbarProps {
   onSubmitToUetds: () => void;
@@ -9,42 +9,46 @@ interface TopbarProps {
 }
 
 export default function Topbar({ onSubmitToUetds, isSubmitting, passengerCount, passengers }: TopbarProps) {
-  
-  const convertTrToEn = (text: string | undefined) => {
-    if (!text) return "";
-    const trMap: { [key: string]: string } = {
-      'ç': 'c', 'Ç': 'C',
-      'ğ': 'g', 'Ğ': 'G',
-      'ı': 'i', 'I': 'I',
-      'İ': 'I', 'ö': 'o',
-      'Ö': 'O', 'ş': 's',
-      'Ş': 'S', 'ü': 'u',
-      'Ü': 'U'
-    };
-    return text.replace(/[çÇğĞıİöÖşŞüÜ]/g, match => trMap[match]).toUpperCase(); // UETDS sistemi genelde büyük harf tercih eder
+  const [customTemplateBuffer, setCustomTemplateBuffer] = useState<ArrayBuffer | null>(null);
+  const [templateName, setTemplateName] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleTemplateUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          setCustomTemplateBuffer(event.target.result as ArrayBuffer);
+          setTemplateName(file.name);
+          alert("Şablon başarıyla yüklendi! Artık indirilen Excel'ler bu dosya üzerinden oluşturulacak.");
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
   };
 
   const handleDownloadExcel = async () => {
     try {
-      // 1. Orijinal şablonu public klasöründen çek
-      const response = await fetch('/sablon.xlsx');
-      if (!response.ok) throw new Error("Şablon dosyası bulunamadı.");
-      const arrayBuffer = await response.arrayBuffer();
+      if (!customTemplateBuffer) {
+        alert("Lütfen önce E-Devlet üzerinden indirdiğiniz güncel ve boş Excel şablonunu (Şablon Yükle butonundan) sisteme yükleyin.");
+        return;
+      }
 
-      // 2. exceljs ve file-saver kütüphanelerini yükle
+      // 1. exceljs ve file-saver kütüphanelerini yükle
       const ExcelJS = await import("exceljs");
       const { saveAs } = await import("file-saver");
       
-      // 3. Şablonu tamamen orjinal haliyle belleğe oku
+      // 2. Yüklenen şablonu belleğe oku
       const workbook = new ExcelJS.Workbook();
-      await workbook.xlsx.load(arrayBuffer);
+      await workbook.xlsx.load(customTemplateBuffer);
       
-      // 4. YOLCULAR sayfasını bul
+      // 3. YOLCULAR sayfasını bul
       const worksheet = workbook.getWorksheet("YOLCULAR");
       
-      if (!worksheet) throw new Error("Şablonda YOLCULAR sayfası bulunamadı.");
+      if (!worksheet) throw new Error("Yüklediğiniz şablonda YOLCULAR sayfası bulunamadı. Doğru dosyayı yüklediğinize emin olun.");
 
-      // 5. 2. Satırdan itibaren verileri yaz (1. Satır Başlık)
+      // 4. 2. Satırdan itibaren verileri yaz (1. Satır Başlık)
       passengers.forEach((p, index) => {
         const rowIndex = index + 2; // exceljs 1-indexed, 1=header, 2=data
         const row = worksheet.getRow(rowIndex);
@@ -102,14 +106,14 @@ export default function Topbar({ onSubmitToUetds, isSubmitting, passengerCount, 
         row.commit();
       });
 
-      // 6. Dosyayı indir (Stiller, makrolar, gizli ayarlar tamamen korundu)
+      // 5. Dosyayı indir (Stiller, makrolar, gizli ayarlar tamamen korundu)
       const buffer = await workbook.xlsx.writeBuffer();
       const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-      saveAs(blob, "yolcular.xlsx");
+      saveAs(blob, "yolcular_uetds.xlsx");
 
     } catch (error) {
       console.error("Excel oluşturulurken hata:", error);
-      alert("Excel oluşturulurken bir hata oluştu.");
+      alert("Excel oluşturulurken bir hata oluştu: " + error);
     }
   };
 
@@ -120,10 +124,33 @@ export default function Topbar({ onSubmitToUetds, isSubmitting, passengerCount, 
         <span className="text-sm text-gray-500">
           Onay Bekleyen: <strong>{passengerCount}</strong>
         </span>
+        
+        {/* Gizli Dosya Seçici */}
+        <input 
+          type="file" 
+          accept=".xlsx" 
+          ref={fileInputRef} 
+          onChange={handleTemplateUpload} 
+          className="hidden" 
+        />
+        
+        {/* Şablon Yükleme Butonu */}
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          className={`btn-secondary !bg-blue-50 !text-blue-600 !border-blue-200 hover:!bg-blue-100 flex items-center`}
+          title="Kendi boş şablonunuzu yüklemek için tıklayın"
+        >
+          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+          </svg>
+          {templateName ? `Şablon: ${templateName}` : "Şablon Yükle"}
+        </button>
+
         <button
           onClick={handleDownloadExcel}
-          disabled={passengerCount === 0}
-          className={`btn-secondary ${passengerCount === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+          disabled={passengerCount === 0 || !customTemplateBuffer}
+          className={`btn-secondary ${passengerCount === 0 || !customTemplateBuffer ? 'opacity-50 cursor-not-allowed' : ''}`}
+          title={!customTemplateBuffer ? "Önce şablon yüklemelisiniz" : "Verileri şablona aktar ve indir"}
         >
           Excel İndir (U-ETDS)
         </button>
