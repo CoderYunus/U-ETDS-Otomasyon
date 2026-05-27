@@ -56,7 +56,7 @@ export default function Sidebar() {
         <p className="text-xs text-gray-400 mb-4 font-semibold uppercase tracking-widest">Powered By</p>
         <div className="flex items-center space-x-4">
           <a href="https://www.linkedin.com/company/byzon-technologies/?viewAsMember=true" target="_blank" rel="noopener noreferrer">
-            <img src="/byzon.svg" alt="Byzon" className="h-20 w-auto object-contain cursor-pointer hover:opacity-80 transition-opacity" />
+            <img src="/byzon.svg" alt="Byzon" className="h-8 w-auto object-contain cursor-pointer hover:opacity-80 transition-opacity" />
           </a>
           <span className="text-xl font-bold text-gray-300">&</span>
           <a href="https://www.instagram.com/zmrtravel/" target="_blank" rel="noopener noreferrer">
