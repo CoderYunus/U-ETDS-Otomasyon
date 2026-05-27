@@ -49,7 +49,31 @@ export default function Topbar({ onSubmitToUetds, isSubmitting, passengerCount, 
         const rowIndex = index + 2; // exceljs 1-indexed, 1=header, 2=data
         const row = worksheet.getRow(rowIndex);
 
-        const ulke = p.nationality ? p.nationality.toUpperCase() : "TR";
+        const countryMap: Record<string, string> = {
+          "ARMENIA": "AM", "ERMENISTAN": "AM", "ERMENİSTAN": "AM",
+          "RUSSIA": "RU", "RUSSIAN": "RU", "RUSYA": "RU", "RUSSIAN FEDERATION": "RU",
+          "TURKEY": "TR", "TÜRKİYE": "TR", "TURKIYE": "TR",
+          "GERMANY": "DE", "ALMANYA": "DE",
+          "FRANCE": "FR", "FRANSA": "FR",
+          "UNITED KINGDOM": "GB", "UK": "GB", "İNGİLTERE": "GB", "INGILTERE": "GB",
+          "UNITED STATES": "US", "USA": "US", "AMERİKA": "US", "ABD": "US", "UNITED STATES OF AMERICA": "US",
+          "IRAN": "IR", "İRAN": "IR", "ISLAMIC REPUBLIC OF IRAN": "IR",
+          "IRAQ": "IQ", "IRAK": "IQ",
+          "SYRIA": "SY", "SURİYE": "SY", "SURIYE": "SY",
+          "GREECE": "GR", "YUNANİSTAN": "GR", "YUNANISTAN": "GR",
+          "BULGARIA": "BG", "BULGARİSTAN": "BG", "BULGARISTAN": "BG",
+          "GEORGIA": "GE", "GÜRCİSTAN": "GE", "GURCISTAN": "GE",
+          "AZERBAIJAN": "AZ", "AZERBAYCAN": "AZ",
+          "NETHERLANDS": "NL", "HOLLANDA": "NL",
+          "ITALY": "IT", "İTALYA": "IT", "ITALYA": "IT",
+          "SPAIN": "ES", "İSPANYA": "ES", "ISPANYA": "ES",
+          "UKRAINE": "UA", "UKRAYNA": "UA",
+          "BELARUS": "BY", "BEYAZ RUSYA": "BY",
+          "KAZAKHSTAN": "KZ", "KAZAKİSTAN": "KZ", "KAZAKISTAN": "KZ",
+          "UZBEKISTAN": "UZ", "ÖZBEKİSTAN": "UZ", "OZBEKISTAN": "UZ"
+        };
+        let rawUlke = p.nationality ? p.nationality.toUpperCase().trim() : "TR";
+        const ulke = countryMap[rawUlke] || rawUlke;
         const ad = p.firstName ? p.firstName.toUpperCase() : "";
         const soyad = p.lastName ? p.lastName.toUpperCase() : "";
         const cinsiyet = p.gender && p.gender.toUpperCase() === "K" ? "K" : "E";
