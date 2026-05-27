@@ -1,4 +1,5 @@
 import { Passenger } from "@/types";
+import { cinsiyetData, ulkeKodlariData } from "@/utils/excelTemplateData";
 
 interface TopbarProps {
   onSubmitToUetds: () => void;
@@ -26,8 +27,7 @@ export default function Topbar({ onSubmitToUetds, isSubmitting, passengerCount, 
   const handleDownloadExcel = () => {
     // xlsx kütüphanesini dinamik yükleyelim (tarayıcıda çalışması için)
     import("xlsx").then((XLSX) => {
-      // Başlıklar tam olarak şablondaki (sablon-excel.pdf) gibi olmalı. 
-      // DİKKAT: CİNSİYET değil CINSIYET olmalı!
+      // 1. YOLCULAR Sayfası
       const header = ["ÜLKE", "ADI", "SOYADI", "TC KİMLİK /PASAPORT NO", "CINSIYET", "TELEFON", "HES KODU"];
       
       const rows = passengers.map(p => {
@@ -47,11 +47,23 @@ export default function Topbar({ onSubmitToUetds, isSubmitting, passengerCount, 
         ];
       });
 
-      const worksheet = XLSX.utils.aoa_to_sheet([header, ...rows]);
+      const yolcularSheet = XLSX.utils.aoa_to_sheet([header, ...rows]);
       const workbook = XLSX.utils.book_new();
       
-      // E-Devlet "YOLCULAR" sayfasını arıyor olabilir, büyük harf yapıyoruz.
-      XLSX.utils.book_append_sheet(workbook, worksheet, "YOLCULAR");
+      // E-Devlet sırasıyla bu sayfaları arıyor
+      XLSX.utils.book_append_sheet(workbook, yolcularSheet, "YOLCULAR");
+
+      // 2. CİNSİYET Sayfası
+      if (cinsiyetData && cinsiyetData.length > 0) {
+        const cinsiyetSheet = XLSX.utils.aoa_to_sheet(cinsiyetData);
+        XLSX.utils.book_append_sheet(workbook, cinsiyetSheet, "CİNSİYET");
+      }
+
+      // 3. ÜLKE KODLARI Sayfası
+      if (ulkeKodlariData && ulkeKodlariData.length > 0) {
+        const ulkeSheet = XLSX.utils.aoa_to_sheet(ulkeKodlariData);
+        XLSX.utils.book_append_sheet(workbook, ulkeSheet, "ÜLKE KODLARI");
+      }
 
       XLSX.writeFile(workbook, "yolcular.xlsx");
     });
