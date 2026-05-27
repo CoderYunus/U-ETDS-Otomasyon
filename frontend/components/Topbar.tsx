@@ -125,10 +125,16 @@ export default function Topbar({ onSubmitToUetds, isSubmitting, passengerCount, 
   };
 
   return (
-    <header className="bg-surface-light h-16 border-b border-gray-200 flex items-center justify-between px-6">
-      <h1 className="text-xl font-semibold text-gray-800">Yolcu Bildirim Paneli</h1>
-      <div className="flex items-center space-x-4">
-        <span className="text-sm text-gray-500">
+    <header className="bg-surface-light border-b border-gray-200 flex flex-col md:flex-row md:h-16 items-start md:items-center justify-between px-4 md:px-6 py-4 md:py-0 gap-4">
+      <div className="flex items-center justify-between w-full md:w-auto">
+        <h1 className="text-lg md:text-xl font-semibold text-gray-800">Yolcu Bildirim Paneli</h1>
+        <span className="text-sm text-gray-500 md:hidden">
+          Bekleyen: <strong>{passengerCount}</strong>
+        </span>
+      </div>
+      
+      <div className="flex items-center space-x-2 md:space-x-4 w-full md:w-auto overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
+        <span className="text-sm text-gray-500 hidden md:inline whitespace-nowrap">
           Onay Bekleyen: <strong>{passengerCount}</strong>
         </span>
         
@@ -145,10 +151,10 @@ export default function Topbar({ onSubmitToUetds, isSubmitting, passengerCount, 
         <a
           href="/sablon/ornek_sablon.xlsx"
           download
-          className="btn-secondary !bg-green-50 !text-green-600 !border-green-200 hover:!bg-green-100 flex items-center"
+          className="btn-secondary whitespace-nowrap text-xs md:text-sm px-3 md:px-4 !bg-green-50 !text-green-600 !border-green-200 hover:!bg-green-100 flex items-center"
           title="Boş şablonu bilgisayarınıza indirin"
         >
-          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <svg className="w-4 h-4 mr-1 md:mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
           </svg>
           Şablon İndir
@@ -157,10 +163,10 @@ export default function Topbar({ onSubmitToUetds, isSubmitting, passengerCount, 
         {/* Şablon Yükleme Butonu */}
         <button
           onClick={() => fileInputRef.current?.click()}
-          className={`btn-secondary !bg-blue-50 !text-blue-600 !border-blue-200 hover:!bg-blue-100 flex items-center`}
+          className={`btn-secondary whitespace-nowrap text-xs md:text-sm px-3 md:px-4 !bg-blue-50 !text-blue-600 !border-blue-200 hover:!bg-blue-100 flex items-center`}
           title="Kendi boş şablonunuzu yüklemek için tıklayın"
         >
-          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <svg className="w-4 h-4 mr-1 md:mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
           </svg>
           {templateName ? `Şablon: ${templateName}` : "Şablon Yükle"}
@@ -169,17 +175,17 @@ export default function Topbar({ onSubmitToUetds, isSubmitting, passengerCount, 
         <button
           onClick={handleDownloadExcel}
           disabled={passengerCount === 0 || !customTemplateBuffer}
-          className={`btn-secondary ${passengerCount === 0 || !customTemplateBuffer ? 'opacity-50 cursor-not-allowed' : ''}`}
+          className={`btn-secondary whitespace-nowrap text-xs md:text-sm px-3 md:px-4 ${passengerCount === 0 || !customTemplateBuffer ? 'opacity-50 cursor-not-allowed' : ''}`}
           title={!customTemplateBuffer ? "Önce şablon yüklemelisiniz" : "Verileri şablona aktar ve indir"}
         >
-          Excel İndir (U-ETDS)
+          Excel İndir
         </button>
         <button
           onClick={onSubmitToUetds}
           disabled={isSubmitting || passengerCount === 0}
-          className={`btn-primary ${isSubmitting || passengerCount === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+          className={`btn-primary whitespace-nowrap text-xs md:text-sm px-3 md:px-4 ${isSubmitting || passengerCount === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
-          {isSubmitting ? "İletiliyor..." : "U-ETDS'ye İlet"}
+          {isSubmitting ? "İletiliyor..." : "İlet"}
         </button>
       </div>
     </header>

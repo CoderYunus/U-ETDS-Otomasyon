@@ -39,7 +39,11 @@ export default function Home() {
     const res = await parseText(rawText, imageBase64);
     
     if (res.success && res.data) {
-      setPassengers(res.data);
+      const filledPassengers = res.data.map(p => ({
+        ...p,
+        tcNo: p.tcNo && p.tcNo.trim() !== "" ? p.tcNo.trim() : "11111111111"
+      }));
+      setPassengers(filledPassengers);
       setTripDetails(res.tripDetails || null);
       setMessage({ text: "Veriler başarıyla çözümlendi. Lütfen tabloyu kontrol edin.", type: "success" });
     } else {
