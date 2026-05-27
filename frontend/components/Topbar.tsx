@@ -24,24 +24,34 @@ export default function Topbar({ onSubmitToUetds, isSubmitting, passengerCount, 
   };
 
   const handleDownloadExcel = () => {
-    const header = "AD\tSOYAD\tKIMLIK/PASAPORT NO\tCINSIYET\tUYRUK\tTELEFON\tHESKODU\tKOLTUKNO";
-    const rows = passengers.map(p => {
-      const ad = convertTrToEn(p.firstName);
-      const soyad = convertTrToEn(p.lastName);
-      const uyruk = p.nationality ? convertTrToEn(p.nationality) : "TR";
-      return `${ad}\t${soyad}\t${p.tcNo}\tE\t${uyruk}\t${p.phone || ''}\t\t`;
+    // xlsx kütüphanesini dinamik yükleyelim (tarayıcıda çalışması için)
+    import("xlsx").then((XLSX) => {
+      // Başlıklar tam olarak şablondaki (sablon-excel.pdf) gibi olmalı
+      const header = ["ÜLKE", "ADI", "SOYADI", "TC KİMLİK /PASAPORT NO", "CİNSİYET", "TELEFON", "HES KODU"];
+      
+      const rows = passengers.map(p => {
+        const ulke = p.nationality ? p.nationality.toUpperCase() : "TR";
+        const ad = p.firstName ? p.firstName.toUpperCase() : "";
+        const soyad = p.lastName ? p.lastName.toUpperCase() : "";
+        const cinsiyet = p.gender && p.gender.toUpperCase() === "K" ? "K" : "E"; // Varsayılan E
+        
+        return [
+          ulke,
+          ad,
+          soyad,
+          p.tcNo,
+          cinsiyet,
+          p.phone || "",
+          "" // HES KODU
+        ];
+      });
+
+      const worksheet = XLSX.utils.aoa_to_sheet([header, ...rows]);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Yolcular");
+
+      XLSX.writeFile(workbook, "yolcular.xlsx");
     });
-    
-    const tsvContent = [header, ...rows].join("\n");
-    const blob = new Blob([tsvContent], { type: 'application/vnd.ms-excel' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'yolcular.xls';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
   };
 
   return (
