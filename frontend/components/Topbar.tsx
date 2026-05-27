@@ -76,7 +76,7 @@ export default function Topbar({ onSubmitToUetds, isSubmitting, passengerCount, 
           "KAZAKHSTAN": "KZ", "KAZAKİSTAN": "KZ", "KAZAKISTAN": "KZ",
           "UZBEKISTAN": "UZ", "ÖZBEKİSTAN": "UZ", "OZBEKISTAN": "UZ"
         };
-        let rawUlke = p.nationality ? p.nationality.toUpperCase().trim() : "TR";
+        const rawUlke = p.nationality ? p.nationality.toUpperCase().trim() : "TR";
         const ulke = countryMap[rawUlke] || rawUlke;
         const ad = p.firstName ? p.firstName.toUpperCase() : "";
         const soyad = p.lastName ? p.lastName.toUpperCase() : "";
