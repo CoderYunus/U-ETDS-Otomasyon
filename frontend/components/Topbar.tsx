@@ -102,8 +102,6 @@ export default function Topbar({ onSubmitToUetds, isSubmitting, passengerCount, 
           allowBlank: true,
           formulae: ['"E,K"']
         };
-
-        row.commit();
       });
 
       // 5. Dosyayı indir (Stiller, makrolar, gizli ayarlar tamamen korundu)
