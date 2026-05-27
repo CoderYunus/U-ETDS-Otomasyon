@@ -31,50 +31,44 @@ export default function Topbar({ onSubmitToUetds, isSubmitting, passengerCount, 
       if (!response.ok) throw new Error("Şablon dosyası bulunamadı.");
       const arrayBuffer = await response.arrayBuffer();
 
-      // 2. xlsx kütüphanesini dinamik yükle
-      const XLSX = await import("xlsx");
+      // 2. exceljs ve file-saver kütüphanelerini yükle
+      const ExcelJS = await import("exceljs");
+      const { saveAs } = await import("file-saver");
       
-      // 3. Şablonu belleğe oku
-      const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+      // 3. Şablonu tamamen orjinal haliyle belleğe oku
+      const workbook = new ExcelJS.Workbook();
+      await workbook.xlsx.load(arrayBuffer);
       
-      // 4. E-Devletin aradığı o kritik YOLCULAR sayfasını bul
-      const sheetName = "YOLCULAR";
-      const worksheet = workbook.Sheets[sheetName];
+      // 4. YOLCULAR sayfasını bul
+      const worksheet = workbook.getWorksheet("YOLCULAR");
       
       if (!worksheet) throw new Error("Şablonda YOLCULAR sayfası bulunamadı.");
 
-      // Mevcut verileri (başlıkları) diziye çevir
-      const data = XLSX.utils.sheet_to_json<any[]>(worksheet, { header: 1 });
-      
-      // Şablonun ilk satırı başlıktır, biz 2. satırdan (index 1) itibaren yolcuları ekleyeceğiz
-      const basliklar = data.length > 0 ? data[0] : ["ÜLKE", "ADI", "SOYADI", "TC KİMLİK /PASAPORT NO", "CINSIYET", "TELEFON", "HES KODU"];
-      
-      const newRows = passengers.map(p => {
+      // 5. 2. Satırdan itibaren verileri yaz (1. Satır Başlık)
+      passengers.forEach((p, index) => {
+        const rowIndex = index + 2; // exceljs 1-indexed, 1=header, 2=data
+        const row = worksheet.getRow(rowIndex);
+
         const ulke = p.nationality ? p.nationality.toUpperCase() : "TR";
         const ad = p.firstName ? p.firstName.toUpperCase() : "";
         const soyad = p.lastName ? p.lastName.toUpperCase() : "";
         const cinsiyet = p.gender && p.gender.toUpperCase() === "K" ? "K" : "E";
-        
-        return [
-          ulke,
-          ad,
-          soyad,
-          p.tcNo,
-          cinsiyet,
-          p.phone || "",
-          "" // HES KODU
-        ];
+
+        row.getCell(1).value = ulke;
+        row.getCell(2).value = ad;
+        row.getCell(3).value = soyad;
+        row.getCell(4).value = p.tcNo;
+        row.getCell(5).value = cinsiyet;
+        row.getCell(6).value = p.phone || "";
+        row.getCell(7).value = ""; // HES KODU
+
+        row.commit();
       });
 
-      // Eski verilerin üstüne yeni yolcuları ekleyerek taze sayfayı oluştur
-      const finalData = [basliklar, ...newRows];
-      const newWorksheet = XLSX.utils.aoa_to_sheet(finalData);
-      
-      // Eski sayfayı yenisiyle değiştir
-      workbook.Sheets[sheetName] = newWorksheet;
-
-      // 5. Dosyayı indir (Dosyanın geri kalanı tamamen dokunulmamış şablondur)
-      XLSX.writeFile(workbook, "yolcular.xlsx");
+      // 6. Dosyayı indir (Stiller, makrolar, gizli ayarlar tamamen korundu)
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+      saveAs(blob, "yolcular.xlsx");
 
     } catch (error) {
       console.error("Excel oluşturulurken hata:", error);
