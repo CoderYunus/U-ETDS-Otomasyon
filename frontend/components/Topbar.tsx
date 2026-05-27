@@ -141,6 +141,19 @@ export default function Topbar({ onSubmitToUetds, isSubmitting, passengerCount, 
           className="hidden" 
         />
         
+        {/* Örnek Şablon İndirme Butonu */}
+        <a
+          href="/sablon/ornek_sablon.xlsx"
+          download
+          className="btn-secondary !bg-green-50 !text-green-600 !border-green-200 hover:!bg-green-100 flex items-center"
+          title="Boş şablonu bilgisayarınıza indirin"
+        >
+          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          Şablon İndir
+        </a>
+
         {/* Şablon Yükleme Butonu */}
         <button
           onClick={() => fileInputRef.current?.click()}
