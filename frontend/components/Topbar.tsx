@@ -86,6 +86,19 @@ export default function Topbar({ onSubmitToUetds, isSubmitting, passengerCount, 
         row.getCell(6).value = p.phone || "";
         row.getCell(7).value = ""; // HES KODU
 
+        // Açılır menü (Dropdown) kurallarını zorla ekle
+        row.getCell(1).dataValidation = {
+          type: 'list',
+          allowBlank: true,
+          formulae: ['\'ÜLKE KODLARI\'!$A$1:$A$300']
+        };
+
+        row.getCell(5).dataValidation = {
+          type: 'list',
+          allowBlank: true,
+          formulae: ['"E,K"']
+        };
+
         row.commit();
       });
 
