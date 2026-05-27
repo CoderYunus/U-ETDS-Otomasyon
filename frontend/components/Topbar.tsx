@@ -35,9 +35,9 @@ export default function Topbar({ onSubmitToUetds, isSubmitting, passengerCount, 
         return;
       }
 
-      // 1. exceljs ve file-saver kütüphanelerini yükle
-      const ExcelJS = await import("exceljs");
-      const { saveAs } = await import("file-saver");
+      // 1. exceljs kütüphanesini yükle
+      const exceljsModule = await import("exceljs");
+      const ExcelJS = exceljsModule.default || exceljsModule;
       
       // 2. Yüklenen şablonu belleğe oku
       const workbook = new ExcelJS.Workbook();
@@ -107,7 +107,16 @@ export default function Topbar({ onSubmitToUetds, isSubmitting, passengerCount, 
       // 5. Dosyayı indir (Stiller, makrolar, gizli ayarlar tamamen korundu)
       const buffer = await workbook.xlsx.writeBuffer();
       const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-      saveAs(blob, "yolcular_uetds.xlsx");
+      
+      // Tarayıcı üzerinden dosyayı indir (file-saver kullanmadan %100 güvenilir yöntem)
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "yolcular_uetds.xlsx";
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
 
     } catch (error) {
       console.error("Excel oluşturulurken hata:", error);
