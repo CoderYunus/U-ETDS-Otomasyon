@@ -20,10 +20,7 @@ export default function LoginPage() {
       localStorage.setItem("username", res.username);
       localStorage.setItem("role", res.role);
       
-      // Cookie needed for middleware
       document.cookie = `token=${res.token}; path=/; max-age=28800`;
-      
-      // Redirect using window.location to force a full reload and bypass middleware caching
       window.location.href = "/";
     } else {
       setError(res.message || "Giriş başarısız. Kullanıcı adı veya şifre hatalı.");
@@ -33,72 +30,93 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8 border border-gray-100">
-        <div className="flex justify-center mb-8">
-          <a href="https://www.linkedin.com/company/byzon-technologies/?viewAsMember=true" target="_blank" rel="noopener noreferrer">
-            <img src="/byzon.svg" alt="BYZON Technologies" className="h-32 w-auto object-contain hover:opacity-80 transition-opacity" />
-          </a>
-        </div>
-        
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-8">
-          U-ETDS Otomasyonuna Giriş
-        </h2>
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-background-dark">
+      {/* Arka plan dekoratif elementler */}
+      <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-primary-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-40 animate-blob"></div>
+      <div className="absolute top-[20%] right-[-10%] w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-40 animate-blob animation-delay-2000"></div>
+      <div className="absolute bottom-[-20%] left-[20%] w-96 h-96 bg-blue-400 rounded-full mix-blend-multiply filter blur-[128px] opacity-40 animate-blob animation-delay-4000"></div>
 
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4 text-sm">
-            {error}
+      <div className="z-10 w-full max-w-md p-4 animate-fade-in-up">
+        <div className="bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] rounded-3xl p-10 relative overflow-hidden">
+          
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-400 via-primary-500 to-purple-500"></div>
+
+          <div className="flex justify-center mb-10 relative">
+            <div className="absolute inset-0 bg-white/5 blur-xl rounded-full"></div>
+            <a href="https://www.linkedin.com/company/byzon-technologies/?viewAsMember=true" target="_blank" rel="noopener noreferrer" className="relative z-10">
+              {/* Login'de logonun daha iyi görünmesi için filter invert brightness eklenebilir veya SVG beyaz ise direkt kullanılabilir */}
+              <img src="/byzon.svg" alt="BYZON Technologies" className="h-28 w-auto object-contain hover:scale-105 transition-transform duration-500 drop-shadow-2xl brightness-0 invert" />
+            </a>
           </div>
-        )}
-
-        <form onSubmit={handleLogin} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Kullanıcı Adı
-            </label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary outline-none"
-              placeholder="Yunus"
-              required
-            />
+          
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-extrabold text-white tracking-tight">
+              U-ETDS <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-purple-400">Portal</span>
+            </h2>
+            <p className="text-gray-400 text-sm mt-2 font-medium">Yapay Zeka Destekli Sefer Otomasyonu</p>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Şifre
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary outline-none"
-              placeholder="••••••••"
-              required
-            />
-          </div>
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-xl mb-6 text-sm backdrop-blur-sm flex items-center">
+              <svg className="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd"></path></svg>
+              {error}
+            </div>
+          )}
 
-          <button
-            type="submit"
-            disabled={isLoading}
-            className={`w-full py-2.5 px-4 border border-transparent rounded-md shadow-sm text-white bg-primary hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary font-medium transition-colors ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
-          >
-            {isLoading ? "Giriş Yapılıyor..." : "Sisteme Giriş Yap"}
-          </button>
-        </form>
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div>
+              <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-2 ml-1">
+                Kullanıcı Adı
+              </label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full px-5 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-transparent transition-all duration-300"
+                placeholder="Yunus"
+                required
+              />
+            </div>
 
-        <div className="mt-8 text-center border-t border-gray-100 pt-6 flex flex-col items-center">
-          <p className="text-xs text-gray-400 font-semibold mb-2 uppercase tracking-widest">Powered By</p>
-          <div className="flex items-center space-x-3 justify-center">
-             <a href="https://www.linkedin.com/company/byzon-technologies/?viewAsMember=true" target="_blank" rel="noopener noreferrer">
-               <img src="/byzon.svg" alt="Byzon" className="h-20 w-auto hover:opacity-80 transition-opacity" />
-             </a>
-             <span className="text-gray-300">&</span>
-             <a href="https://www.instagram.com/zmrtravel/" target="_blank" rel="noopener noreferrer">
-               <img src="/zmr.svg" alt="ZMR" className="h-12 w-auto hover:opacity-80 transition-opacity" />
-             </a>
+            <div>
+              <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-2 ml-1">
+                Şifre
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-5 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-transparent transition-all duration-300"
+                placeholder="••••••••"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={`w-full py-3.5 px-4 rounded-xl text-white bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-400 shadow-lg shadow-primary-500/25 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background-dark focus:ring-primary-500 font-bold tracking-wide transition-all duration-300 transform hover:-translate-y-1 ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+            >
+              {isLoading ? (
+                <span className="flex items-center justify-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                  Giriş Yapılıyor...
+                </span>
+              ) : "Sisteme Giriş Yap"}
+            </button>
+          </form>
+
+          <div className="mt-12 text-center flex flex-col items-center">
+            <p className="text-[10px] text-gray-400 font-semibold mb-3 uppercase tracking-widest">Powered By</p>
+            <div className="flex items-center justify-center space-x-4 bg-white/5 px-6 py-3 rounded-full border border-white/5 backdrop-blur-sm">
+               <a href="https://www.linkedin.com/company/byzon-technologies/?viewAsMember=true" target="_blank" rel="noopener noreferrer" className="group">
+                 <img src="/byzon.svg" alt="Byzon" className="h-6 w-auto opacity-70 group-hover:opacity-100 transition-all duration-300 brightness-0 invert" />
+               </a>
+               <span className="text-gray-500/50 text-xl font-light">|</span>
+               <a href="https://www.instagram.com/zmrtravel/" target="_blank" rel="noopener noreferrer" className="group">
+                 <img src="/zmr.svg" alt="ZMR" className="h-6 w-auto opacity-70 group-hover:opacity-100 transition-all duration-300 brightness-0 invert" />
+               </a>
+            </div>
           </div>
         </div>
       </div>

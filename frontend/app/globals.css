@@ -2,19 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  @apply bg-background-light text-gray-900;
+@layer base {
+  body {
+    @apply bg-background-light text-gray-900 bg-mesh-light bg-fixed font-sans selection:bg-primary-500 selection:text-white;
+  }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark transition-colors font-medium;
+    @apply relative overflow-hidden bg-gradient-to-r from-primary-600 to-primary-500 text-white px-5 py-2.5 rounded-xl hover:from-primary-700 hover:to-primary-600 transition-all duration-300 font-semibold shadow-lg hover:shadow-primary-500/30 transform hover:-translate-y-0.5;
   }
+  
+  .btn-secondary {
+    @apply bg-white/80 backdrop-blur-md text-gray-700 px-5 py-2.5 rounded-xl border border-gray-200 hover:bg-white hover:border-gray-300 transition-all duration-300 font-medium shadow-sm;
+  }
+  
   .input-field {
-    @apply w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary;
+    @apply w-full p-3.5 bg-white/70 backdrop-blur-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-300;
   }
+  
+  .glass-panel {
+    @apply bg-white/60 backdrop-blur-xl border border-white/40 shadow-glass rounded-2xl;
+  }
+
   .table-cell-error {
-    @apply bg-red-100 text-red-700 border-red-500;
+    @apply bg-red-50 text-red-700 border-red-200 relative overflow-hidden;
   }
 }
 

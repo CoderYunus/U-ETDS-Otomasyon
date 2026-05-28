@@ -2,11 +2,14 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ 
+  subsets: ["latin"],
+  variable: '--font-inter',
+});
 
 export const metadata: Metadata = {
-  title: "U-ETDS Akıllı Bildirim",
-  description: "Byzon Technologies U-ETDS Bildirim Otomasyonu",
+  title: "U-ETDS Otomasyonu",
+  description: "Byzon Technologies U-ETDS Sefer Otomasyon Sistemi",
 };
 
 export default function RootLayout({
@@ -15,8 +18,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr">
-      <body className={inter.className}>{children}</body>
+    <html lang="tr" className={`${inter.variable}`}>
+      <body className="antialiased min-h-screen selection:bg-primary-500 selection:text-white">
+        {children}
+      </body>
     </html>
   );
 }
