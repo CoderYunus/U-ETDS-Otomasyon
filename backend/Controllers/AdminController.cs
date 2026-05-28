@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers;
 
-[Authorize]
+[Authorize(Roles = "Admin")]
 [ApiController]
 [Route("api/[controller]")]
 public class AdminController : ControllerBase
@@ -36,7 +36,7 @@ public class AdminController : ControllerBase
         {
             Username = request.Username,
             Password = request.Password, // Demo: Not hashed
-            Role = "Admin"
+            Role = string.IsNullOrEmpty(request.Role) ? "Üye" : request.Role
         };
 
         _context.Users.Add(user);
@@ -94,6 +94,10 @@ public class AdminController : ControllerBase
         if (!string.IsNullOrEmpty(request.Password))
         {
             user.Password = request.Password;
+        }
+        if (!string.IsNullOrEmpty(request.Role))
+        {
+            user.Role = request.Role;
         }
 
         _context.Logs.Add(new SystemLog

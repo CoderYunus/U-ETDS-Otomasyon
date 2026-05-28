@@ -14,6 +14,7 @@ export default function AdminPage() {
   // Add User State
   const [newUsername, setNewUsername] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [newRole, setNewRole] = useState("Üye");
   const [isAdding, setIsAdding] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -21,6 +22,7 @@ export default function AdminPage() {
   const [editingUserId, setEditingUserId] = useState<number | null>(null);
   const [editUsername, setEditUsername] = useState("");
   const [editPassword, setEditPassword] = useState("");
+  const [editRole, setEditRole] = useState("Üye");
 
   const router = useRouter();
 
@@ -49,10 +51,11 @@ export default function AdminPage() {
     setIsAdding(true);
     setMessage("");
 
-    const res = await addUser({ username: newUsername, password: newPassword });
+    const res = await addUser({ username: newUsername, password: newPassword, role: newRole });
     if (res.success) {
       setNewUsername("");
       setNewPassword("");
+      setNewRole("Üye");
       fetchData(); // Refresh tables
     }
     setMessage(res.message || "Bir hata oluştu.");
@@ -73,10 +76,11 @@ export default function AdminPage() {
     setEditingUserId(u.id);
     setEditUsername(u.username);
     setEditPassword(""); // Boş bırakılırsa şifre değişmez
+    setEditRole(u.role || "Üye");
   };
 
   const handleSaveEdit = async (id: number) => {
-    const res = await editUser(id, { username: editUsername, password: editPassword });
+    const res = await editUser(id, { username: editUsername, password: editPassword, role: editRole });
     if (res.success) {
       setEditingUserId(null);
       fetchData();
@@ -143,6 +147,7 @@ export default function AdminPage() {
                       <tr>
                         <th className="px-4 py-2">ID</th>
                         <th className="px-4 py-2">Kullanıcı Adı</th>
+                        <th className="px-4 py-2">Rol</th>
                         <th className="px-4 py-2 text-right">İşlem</th>
                       </tr>
                     </thead>
@@ -165,6 +170,22 @@ export default function AdminPage() {
                               </div>
                             ) : (
                               <span className="font-medium text-gray-900">{u.username}</span>
+                            )}
+                          </td>
+                          <td className="px-4 py-2">
+                            {editingUserId === u.id ? (
+                              <select 
+                                value={editRole} 
+                                onChange={(e)=>setEditRole(e.target.value)} 
+                                className="border px-2 py-1 text-xs rounded w-full outline-none focus:border-primary"
+                                disabled={u.username === 'admin'}
+                              >
+                                <option value="Admin">Admin</option>
+                                <option value="Kullanıcı">Kullanıcı</option>
+                                <option value="Üye">Üye</option>
+                              </select>
+                            ) : (
+                              <span className={`px-2 py-1 text-xs rounded-full font-bold ${u.role === 'Admin' ? 'bg-purple-100 text-purple-700' : u.role === 'Kullanıcı' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}`}>{u.role || 'Üye'}</span>
                             )}
                           </td>
                           <td className="px-4 py-2 text-right">
@@ -193,6 +214,11 @@ export default function AdminPage() {
                   <form onSubmit={handleAddUser} className="flex flex-col space-y-3">
                     <input type="text" placeholder="Kullanıcı Adı" value={newUsername} onChange={(e)=>setNewUsername(e.target.value)} required className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary outline-none text-sm"/>
                     <input type="password" placeholder="Şifre" value={newPassword} onChange={(e)=>setNewPassword(e.target.value)} required className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary outline-none text-sm"/>
+                    <select value={newRole} onChange={(e)=>setNewRole(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary outline-none text-sm">
+                      <option value="Admin">Admin</option>
+                      <option value="Kullanıcı">Kullanıcı</option>
+                      <option value="Üye">Üye</option>
+                    </select>
                     <button type="submit" disabled={isAdding} className="bg-primary text-white py-2 rounded-md hover:bg-blue-700 text-sm font-medium">{isAdding ? 'Ekleniyor...' : 'Ekle'}</button>
                   </form>
                   {message && <p className="mt-2 text-sm text-gray-600">{message}</p>}

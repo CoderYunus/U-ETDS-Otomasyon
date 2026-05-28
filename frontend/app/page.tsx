@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "@/components/Sidebar";
 import Topbar from "@/components/Topbar";
 import DataTable from "@/components/DataTable";
@@ -15,6 +15,16 @@ export default function Home() {
   const [isParsing, setIsParsing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<{ text: string, type: 'success' | 'error' } | null>(null);
+  const [role, setRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedRole = localStorage.getItem("role");
+    if (!storedRole) {
+      window.location.href = "/login";
+    } else {
+      setRole(storedRole);
+    }
+  }, []);
 
   const [imageBase64, setImageBase64] = useState<string>("");
 
@@ -107,7 +117,21 @@ export default function Home() {
               </div>
             )}
 
-            <div className="glass-panel p-6 md:p-8 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+            {role === "Üye" ? (
+              <div className="glass-panel p-10 text-center animate-fade-in-up mt-10 border-amber-200/50 bg-gradient-to-b from-amber-50/50 to-white/50 backdrop-blur-xl">
+                <div className="flex justify-center mb-6">
+                  <div className="w-20 h-20 bg-amber-100/50 rounded-full flex items-center justify-center animate-pulse">
+                    <svg className="w-10 h-10 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                  </div>
+                </div>
+                <h3 className="text-2xl font-extrabold text-amber-800 mb-3">Hesabınız Onay Bekliyor</h3>
+                <p className="text-amber-700/80 font-medium max-w-lg mx-auto text-lg">
+                  Sisteme <strong>&quot;Üye&quot;</strong> rolü ile kayıtlısınız. Çözümleme yapabilmek ve U-ETDS bildirimi gönderebilmek için yöneticinin size <strong>&quot;Kullanıcı&quot;</strong> yetkisi vermesi gerekmektedir.
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="glass-panel p-6 md:p-8 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
               <div className="mb-6">
                 <h3 className="text-xl font-bold text-gray-800 tracking-tight flex items-center">
                   <img src="/uetds-icon.png" alt="Icon" className="w-6 h-6 mr-2 object-contain" />
@@ -196,6 +220,8 @@ export default function Home() {
               </div>
               <DataTable passengers={passengers} setPassengers={setPassengers} />
             </div>
+              </>
+            )}
 
           </div>
         </main>

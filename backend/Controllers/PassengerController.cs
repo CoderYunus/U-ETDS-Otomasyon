@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace backend.Controllers;
 
-[Authorize]
+[Authorize(Roles = "Admin, Kullanıcı")]
 [ApiController]
 [Route("api/[controller]")]
 public class PassengerController : ControllerBase
