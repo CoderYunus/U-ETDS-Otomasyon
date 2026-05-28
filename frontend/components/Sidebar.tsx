@@ -19,9 +19,15 @@ export default function Sidebar() {
     <div className="w-72 bg-white/5 backdrop-blur-3xl border-r border-white/10 h-screen hidden md:flex md:flex-col shadow-2xl relative z-20">
       
       {/* Şık logo alanı */}
-      <div className="p-6 flex flex-col items-center justify-center border-b border-white/5 min-h-[140px] relative overflow-hidden">
+      <div className="p-8 flex flex-col justify-center border-b border-white/5 min-h-[140px] relative overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-primary-500/20 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
-        <img src="/uetds-logo.png" alt="U-ETDS Logo" className="h-16 w-auto object-contain relative z-10 drop-shadow-lg" />
+        <h2 className="text-xl font-extrabold text-white leading-tight flex items-center">
+          <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-400 to-purple-500 mr-3 flex items-center justify-center shadow-lg shadow-primary-500/30">
+            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+          </span>
+          U-ETDS
+        </h2>
+        <span className="block text-xs text-gray-400 font-medium mt-2 tracking-wide uppercase ml-11">Yapay Zeka Otomasyonu</span>
       </div>
 
       <nav className="mt-8 flex-1 px-4 space-y-2">
@@ -63,7 +69,7 @@ export default function Sidebar() {
         <p className="text-[10px] text-gray-500 mb-4 font-bold uppercase tracking-widest">Powered By</p>
         <div className="flex items-center space-x-3 opacity-60 hover:opacity-100 transition-opacity duration-300">
           <a href="https://www.linkedin.com/company/byzon-technologies/?viewAsMember=true" target="_blank" rel="noopener noreferrer">
-            <img src="/byzon.svg" alt="Byzon" className="h-6 w-auto object-contain cursor-pointer brightness-0 invert" />
+            <img src="/byzon.svg" alt="Byzon" className="h-11 w-auto object-contain cursor-pointer brightness-0 invert" />
           </a>
           <span className="text-gray-600 font-light text-lg">|</span>
           <a href="https://www.instagram.com/zmrtravel/" target="_blank" rel="noopener noreferrer">
