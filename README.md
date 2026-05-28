@@ -36,58 +36,7 @@ Bu proje, güçlü performans ve kolay ölçeklenebilirlik sağlamak adına mikr
 - **Güvenlik:** JWT Token Authentication
 - **Dağıtım:** Render
 
----
 
-## 🚀 Kurulum & Çalıştırma (Yerel Geliştirme)
-
-Projeyi kendi bilgisayarınızda çalıştırmak için aşağıdaki adımları izleyebilirsiniz.
-
-### 1. Ön Koşullar
-- [Node.js](https://nodejs.org/en/) (v18 veya üzeri)
-- [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
-- Geçerli bir Google Gemini API Key
-
-### 2. Backend'i Başlatma (.NET 8)
-1. Terminali açın ve `backend` klasörüne gidin:
-   ```bash
-   cd backend
-   ```
-2. Eksik bağımlılıkları yükleyin ve projeyi çalıştırın:
-   ```bash
-   dotnet restore
-   dotnet run
-   ```
-3. Backend servisi varsayılan olarak `http://localhost:5000` portunda çalışacaktır. Swagger API belgelerine `http://localhost:5000/swagger` üzerinden ulaşabilirsiniz.
-
-### 3. Frontend'i Başlatma (Next.js)
-1. Yeni bir terminal açın ve `frontend` klasörüne gidin:
-   ```bash
-   cd frontend
-   ```
-2. Bağımlılıkları yükleyin:
-   ```bash
-   npm install
-   ```
-3. Geliştirme sunucusunu başlatın:
-   ```bash
-   npm run dev
-   ```
-4. Tarayıcınızda `http://localhost:3000` adresine giderek uygulamayı kullanmaya başlayabilirsiniz.
-
-> **Önemli Not:** Frontend varsayılan olarak production API'sine bağlanmaya çalışabilir. Yerel testler için `frontend/services/apiService.ts` dosyasındaki `API_BASE_URL` adresini `http://localhost:5000/api` olarak değiştirmeyi unutmayın.
-
----
-
-## 👥 Varsayılan Kullanıcılar
-
-Projeyi ilk çalıştırdığınızda hafıza tabanlı (In-Memory) veritabanına eklenen örnek kullanıcılar şunlardır:
-
-| Kullanıcı Adı | Şifre | Yetki |
-| :--- | :--- | :--- |
-| `admin` | `admin123` | **Admin** (Yönetim Paneli Açık) |
-| `user1` | `user123` | **User** (Sadece Veri Girişi) |
-
----
 
 ## 🤝 İletişim ve Katkı
 
