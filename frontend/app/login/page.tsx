@@ -41,17 +41,16 @@ export default function LoginPage() {
           
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-400 via-primary-500 to-purple-500"></div>
 
-          <div className="flex justify-center mb-10 relative">
-            <div className="absolute inset-0 bg-white/5 blur-xl rounded-full"></div>
-            <a href="https://www.linkedin.com/company/byzon-technologies/?viewAsMember=true" target="_blank" rel="noopener noreferrer" className="relative z-10">
-              {/* Login'de logonun daha iyi görünmesi için filter invert brightness eklenebilir veya SVG beyaz ise direkt kullanılabilir */}
-              <img src="/byzon.svg" alt="BYZON Technologies" className="h-28 w-auto object-contain hover:scale-105 transition-transform duration-500 drop-shadow-2xl brightness-0 invert" />
-            </a>
+          <div className="flex justify-center mb-8 relative">
+            <div className="absolute inset-0 bg-white/10 blur-2xl rounded-full"></div>
+            <div className="relative z-10 bg-white/5 p-4 rounded-2xl backdrop-blur-sm border border-white/10 shadow-xl">
+              <img src="/uetds-logo.png" alt="U-ETDS Otomasyon" className="h-28 w-auto object-contain hover:scale-105 transition-transform duration-500 drop-shadow-2xl" />
+            </div>
           </div>
           
           <div className="text-center mb-10">
-            <h2 className="text-3xl font-extrabold text-white tracking-tight">
-              U-ETDS <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-purple-400">Portal</span>
+            <h2 className="text-2xl font-extrabold text-white tracking-tight">
+              Sistem <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-purple-400">Girişi</span>
             </h2>
             <p className="text-gray-400 text-sm mt-2 font-medium">Yapay Zeka Destekli Sefer Otomasyonu</p>
           </div>

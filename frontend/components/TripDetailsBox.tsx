@@ -145,7 +145,7 @@ export default function TripDetailsBox({ tripDetails }: TripDetailsBoxProps) {
             <div className="col-span-1 md:col-span-2 bg-white/50 backdrop-blur-sm p-4 rounded-2xl border border-white/60 shadow-sm mt-2">
               <span className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">Ek Açıklamalar</span>
               <div className="text-gray-700 text-sm leading-relaxed italic border-l-4 border-primary-300 pl-3">
-                "{tripDetails.description}"
+                &quot;{tripDetails.description}&quot;
               </div>
             </div>
           )}
