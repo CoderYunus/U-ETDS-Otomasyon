@@ -49,6 +49,9 @@ export default function LoginPage() {
           </div>
           
           <div className="text-center mb-10">
+            <div className="flex justify-center mb-4">
+              <img src="/uetds-icon.png" alt="Icon" className="w-12 h-12 object-contain drop-shadow-lg" />
+            </div>
             <h2 className="text-3xl font-extrabold text-white tracking-tight">
               U-ETDS <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-purple-400">Portal</span>
             </h2>

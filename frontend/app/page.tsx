@@ -110,7 +110,7 @@ export default function Home() {
             <div className="glass-panel p-6 md:p-8 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
               <div className="mb-6">
                 <h3 className="text-xl font-bold text-gray-800 tracking-tight flex items-center">
-                  <svg className="w-6 h-6 mr-2 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                  <img src="/uetds-icon.png" alt="Icon" className="w-6 h-6 mr-2 object-contain" />
                   Veri Girişi Merkezi
                 </h3>
                 <p className="text-sm text-gray-500 mt-2 font-medium">
