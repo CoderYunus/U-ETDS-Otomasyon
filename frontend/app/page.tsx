@@ -26,27 +26,55 @@ export default function Home() {
     }
   }, []);
 
-  const [imageBase64, setImageBase64] = useState<string>("");
+  const [uploadedImages, setUploadedImages] = useState<{ id: string; name: string; base64: string }[]>([]);
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result as string;
-        setImageBase64(base64String);
-        setMessage({ text: "Görsel sisteme yüklendi. Şimdi yapay zeka ile çözümleyebilirsiniz.", type: "success" });
-      };
-      reader.readAsDataURL(file);
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const newImages: { id: string; name: string; base64: string }[] = [];
+      
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const base64String = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.readAsDataURL(file);
+        });
+        
+        newImages.push({
+          id: `${Date.now()}-${i}-${Math.random().toString(36).substring(2, 9)}`,
+          name: file.name,
+          base64: base64String
+        });
+      }
+      
+      setUploadedImages((prev) => [...prev, ...newImages]);
+      setMessage({ text: `${files.length} adet görsel başarıyla eklendi. Şimdi yapay zeka ile çözümleyebilirsiniz.`, type: "success" });
+      
+      // Reset the file input value so the same file can be uploaded again
+      e.target.value = "";
     }
   };
 
+  const removeImage = (id: string) => {
+    setUploadedImages((prev) => {
+      const filtered = prev.filter(img => img.id !== id);
+      if (filtered.length === 0) {
+        setMessage(null);
+      } else {
+        setMessage({ text: "Görsel silindi.", type: "success" });
+      }
+      return filtered;
+    });
+  };
+
   const handleParse = async () => {
-    if (!rawText.trim() && !imageBase64) return;
+    if (!rawText.trim() && uploadedImages.length === 0) return;
     
     setIsParsing(true);
     setMessage(null);
-    const res = await parseText(rawText, imageBase64);
+    const imagesPayload = uploadedImages.map((img) => img.base64);
+    const res = await parseText(rawText, imagesPayload);
     
     if (res.success && res.data) {
       const filledPassengers = res.data.map(p => ({
@@ -77,7 +105,7 @@ export default function Home() {
       setMessage({ text: res.message || "Veriler başarıyla U-ETDS sistemine iletildi.", type: "success" });
       setPassengers([]); 
       setRawText("");
-      setImageBase64("");
+      setUploadedImages([]);
     } else {
       setMessage({ text: res.message || "İletim hatası.", type: "error" });
     }
@@ -162,28 +190,67 @@ export default function Home() {
                       accept="image/*" 
                       className="hidden" 
                       onChange={handleImageUpload} 
+                      multiple
                     />
                     <label htmlFor="imageUpload" className="cursor-pointer flex flex-col items-center justify-center w-full h-full">
                       <div className="w-14 h-14 bg-primary-50 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-primary-100 transition-all duration-300">
                         <svg className="w-7 h-7 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                       </div>
-                      <span className="text-sm font-bold text-gray-700">Görsel (OCR) Yükle</span>
-                      <span className="text-xs text-gray-500 mt-1 font-medium">Tıkla veya Sürükle (PNG, JPG)</span>
+                      <span className="text-sm font-bold text-gray-700">Görselleri Yükle</span>
+                      <span className="text-xs text-gray-500 mt-1 font-medium">Tıkla veya Çoklu Seç (PNG, JPG)</span>
                     </label>
-                    {imageBase64 && (
+                    {uploadedImages.length > 0 && (
                       <div className="absolute bottom-4 inset-x-0 mx-auto w-11/12 bg-green-50 border border-green-200 text-green-700 text-xs py-1.5 px-2 rounded-lg font-semibold truncate shadow-sm">
-                        ✨ Görsel Hazır
+                        ✨ {uploadedImages.length} Görsel Hazır
                       </div>
                     )}
                   </div>
                 </div>
               </div>
 
+              {uploadedImages.length > 0 && (
+                <div className="mt-4 mb-6 p-4 bg-white/60 border border-white/50 rounded-2xl backdrop-blur-md shadow-inner animate-fade-in-up">
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="text-sm font-bold text-gray-700 flex items-center">
+                      <span className="w-2.5 h-2.5 bg-green-500 rounded-full mr-2 animate-ping"></span>
+                      Yüklü Görseller ({uploadedImages.length})
+                    </span>
+                    <button 
+                      onClick={() => {
+                        setUploadedImages([]);
+                        setMessage({ text: "Tüm görseller temizlendi.", type: "success" });
+                      }}
+                      className="text-xs text-red-500 hover:text-red-700 font-bold transition-colors"
+                    >
+                      Tümünü Temizle
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    {uploadedImages.map((img) => (
+                      <div key={img.id} className="relative group/img bg-white/80 border border-gray-100 rounded-xl p-2 flex flex-col items-center shadow-sm hover:shadow-md transition-all">
+                        <img 
+                          src={img.base64} 
+                          alt={img.name} 
+                          className="w-full h-24 object-cover rounded-lg"
+                        />
+                        <span className="text-[10px] text-gray-600 mt-1.5 font-medium truncate w-full text-center px-1" title={img.name}>{img.name}</span>
+                        <button
+                          onClick={() => removeImage(img.id)}
+                          className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 shadow-md hover:scale-110 transition-all opacity-100 sm:opacity-90 sm:group-hover/img:opacity-100 z-20 animate-fade-in"
+                        >
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="flex justify-end relative z-10">
                 <button
                   onClick={handleParse}
-                  disabled={isParsing || (!rawText.trim() && !imageBase64)}
-                  className={`btn-primary px-10 py-3.5 flex items-center ${isParsing || (!rawText.trim() && !imageBase64) ? 'opacity-50 cursor-not-allowed hover:translate-y-0 shadow-none' : ''}`}
+                  disabled={isParsing || (!rawText.trim() && uploadedImages.length === 0)}
+                  className={`btn-primary px-10 py-3.5 flex items-center ${isParsing || (!rawText.trim() && uploadedImages.length === 0) ? 'opacity-50 cursor-not-allowed hover:translate-y-0 shadow-none' : ''}`}
                 >
                   {isParsing ? (
                     <>

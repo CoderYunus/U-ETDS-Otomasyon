@@ -80,12 +80,12 @@ export const getLogs = async (): Promise<any> => {
   }
 };
 
-export const parseText = async (rawText: string, imageBase64?: string): Promise<ParseResponse> => {
+export const parseText = async (rawText: string, imagesBase64?: string[]): Promise<ParseResponse> => {
   try {
     const response = await fetch(`${API_BASE_URL}/passenger/parse`, {
       method: "POST",
       headers: getAuthHeaders(),
-      body: JSON.stringify({ rawText, imageBase64 }),
+      body: JSON.stringify({ rawText, imagesBase64 }),
     });
     return await response.json();
   } catch (error) {

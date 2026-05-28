@@ -18,7 +18,7 @@ public class AiIntegrationService
                   ?? "";
     }
 
-    public async Task<AiParseResult> AnalyzeTextAsync(string rawText, string? imageBase64 = null)
+    public async Task<AiParseResult> AnalyzeTextAsync(string rawText, List<string>? imagesBase64 = null)
     {
         if (string.IsNullOrEmpty(_apiKey))
         {
@@ -42,27 +42,32 @@ Metin:
 
         var partsList = new List<object> { new { text = prompt } };
 
-        if (!string.IsNullOrWhiteSpace(imageBase64))
+        if (imagesBase64 != null && imagesBase64.Count > 0)
         {
-            var commaIndex = imageBase64.IndexOf(',');
-            var mimeType = "image/jpeg";
-            var base64Data = imageBase64;
-            
-            if (commaIndex > 0 && imageBase64.StartsWith("data:"))
+            foreach (var img in imagesBase64)
             {
-                var prefix = imageBase64.Substring(5, commaIndex - 5);
-                mimeType = prefix.Split(';')[0];
-                base64Data = imageBase64.Substring(commaIndex + 1);
-            }
-            
-            partsList.Add(new
-            {
-                inlineData = new
+                if (string.IsNullOrWhiteSpace(img)) continue;
+
+                var commaIndex = img.IndexOf(',');
+                var mimeType = "image/jpeg";
+                var base64Data = img;
+                
+                if (commaIndex > 0 && img.StartsWith("data:"))
                 {
-                    mimeType = mimeType,
-                    data = base64Data
+                    var prefix = img.Substring(5, commaIndex - 5);
+                    mimeType = prefix.Split(';')[0];
+                    base64Data = img.Substring(commaIndex + 1);
                 }
-            });
+                
+                partsList.Add(new
+                {
+                    inlineData = new
+                    {
+                        mimeType = mimeType,
+                        data = base64Data
+                    }
+                });
+            }
         }
 
         var payload = new

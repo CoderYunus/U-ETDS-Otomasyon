@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using backend.Models;
 using backend.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -25,10 +26,26 @@ public class PassengerController : ControllerBase
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(request.RawText) && string.IsNullOrWhiteSpace(request.ImageBase64))
+            var images = new List<string>();
+            if (!string.IsNullOrWhiteSpace(request.ImageBase64))
+            {
+                images.Add(request.ImageBase64);
+            }
+            if (request.ImagesBase64 != null)
+            {
+                foreach (var img in request.ImagesBase64)
+                {
+                    if (!string.IsNullOrWhiteSpace(img))
+                    {
+                        images.Add(img);
+                    }
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(request.RawText) && images.Count == 0)
                 return BadRequest(new { success = false, message = "Metin veya görsel boş olamaz." });
 
-            var result = await _aiService.AnalyzeTextAsync(request.RawText, request.ImageBase64);
+            var result = await _aiService.AnalyzeTextAsync(request.RawText, images);
             
             return Ok(new { success = true, data = result.Passengers, tripDetails = result.TripDetails });
         }
