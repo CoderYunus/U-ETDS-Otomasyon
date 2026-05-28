@@ -110,42 +110,64 @@ export default function TripDetailsBox({ tripDetails }: TripDetailsBoxProps) {
   if (!tripDetails) return null;
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm border border-blue-200 mt-6 bg-blue-50">
-      <h3 className="text-lg font-medium text-blue-800 mb-4 flex items-center">
-        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        Yapay Zeka Tarafından Algılanan Sefer Bilgileri
-      </h3>
+    <div className="glass-panel p-6 md:p-8 mt-6 relative overflow-hidden group">
+      {/* Dekoratif Işık Efekti */}
+      <div className="absolute top-0 right-0 w-32 h-32 bg-primary-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
       
-      <div className="grid grid-cols-2 gap-4 mb-6 text-sm">
-        <div className="bg-white p-3 rounded border border-blue-100">
-          <span className="text-gray-500 block mb-1">Başlangıç</span>
-          <strong>{tripDetails.departureCity || 'Belirtilmedi'}</strong> {tripDetails.departureDistrict ? `/ ${tripDetails.departureDistrict}` : ''}
-        </div>
-        <div className="bg-white p-3 rounded border border-blue-100">
-          <span className="text-gray-500 block mb-1">Bitiş</span>
-          <strong>{tripDetails.arrivalCity || 'Belirtilmedi'}</strong> {tripDetails.arrivalDistrict ? `/ ${tripDetails.arrivalDistrict}` : ''}
-        </div>
-        {tripDetails.description && (
-          <div className="col-span-2 bg-white p-3 rounded border border-blue-100">
-            <span className="text-gray-500 block mb-1">Açıklama</span>
-            {tripDetails.description}
+      <div className="relative z-10">
+        <h3 className="text-lg md:text-xl font-bold text-gray-800 mb-6 flex items-center tracking-tight">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-400 to-purple-500 flex items-center justify-center mr-3 shadow-lg shadow-primary-500/20">
+            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
           </div>
-        )}
-      </div>
-
-      <div className="bg-blue-100 p-4 rounded-md border border-blue-200 flex items-center justify-between">
-        <div>
-          <h4 className="font-semibold text-blue-900 mb-1">Otomatik Form Doldurucu</h4>
-          <p className="text-sm text-blue-700">Aşağıdaki butonu tarayıcınızın <strong>Yer İmleri (Sık Kullanılanlar)</strong> çubuğuna sürükleyip bırakın. U-ETDS sayfasındayken bu yer imine tıklarsanız form otomatik dolar.</p>
+          Yapay Zeka Hedef Çıkarımı
+        </h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div className="bg-white/50 backdrop-blur-sm p-4 rounded-2xl border border-white/60 shadow-sm hover:shadow-md transition-all group-hover:border-primary-200/50">
+            <span className="flex items-center text-xs font-bold uppercase tracking-wider text-primary-600 mb-2">
+              <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+              Kalkış Noktası
+            </span>
+            <div className="text-gray-800 font-semibold text-lg">{tripDetails.departureCity || 'Belirtilmedi'}</div>
+            <div className="text-gray-500 text-sm mt-0.5">{tripDetails.departureDistrict ? `${tripDetails.departureDistrict}` : 'İlçe bilgisi yok'}</div>
+          </div>
+          
+          <div className="bg-white/50 backdrop-blur-sm p-4 rounded-2xl border border-white/60 shadow-sm hover:shadow-md transition-all group-hover:border-purple-200/50">
+            <span className="flex items-center text-xs font-bold uppercase tracking-wider text-purple-600 mb-2">
+              <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"></path></svg>
+              Varış Noktası
+            </span>
+            <div className="text-gray-800 font-semibold text-lg">{tripDetails.arrivalCity || 'Belirtilmedi'}</div>
+            <div className="text-gray-500 text-sm mt-0.5">{tripDetails.arrivalDistrict ? `${tripDetails.arrivalDistrict}` : 'İlçe bilgisi yok'}</div>
+          </div>
+          
+          {tripDetails.description && (
+            <div className="col-span-1 md:col-span-2 bg-white/50 backdrop-blur-sm p-4 rounded-2xl border border-white/60 shadow-sm mt-2">
+              <span className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">Ek Açıklamalar</span>
+              <div className="text-gray-700 text-sm leading-relaxed italic border-l-4 border-primary-300 pl-3">
+                "{tripDetails.description}"
+              </div>
+            </div>
+          )}
         </div>
-        <a 
-          href={bookmarklet}
-          onClick={(e) => e.preventDefault()}
-          className="ml-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md cursor-grab active:cursor-grabbing whitespace-nowrap transition-colors"
-          title="Beni Yer İmleri Çubuğuna Sürükle!"
-        >
-          🔖 U-ETDS Doldur
-        </a>
+
+        <div className="bg-gradient-to-r from-primary-50 to-purple-50 p-5 rounded-2xl border border-primary-100/50 flex flex-col md:flex-row items-center justify-between gap-4 mt-8">
+          <div className="flex-1">
+            <h4 className="font-bold text-gray-800 mb-1 flex items-center">
+              <span className="text-xl mr-2">⚡</span> U-ETDS Otomatik Doldurucu
+            </h4>
+            <p className="text-sm text-gray-600 font-medium">Bu butonu tarayıcınızın <strong>Yer İmleri (Sık Kullanılanlar)</strong> çubuğuna sürükleyin. U-ETDS panelindeyken tıkladığınızda tüm form otomatik dolar.</p>
+          </div>
+          <a 
+            href={bookmarklet}
+            onClick={(e) => e.preventDefault()}
+            className="w-full md:w-auto px-6 py-3 bg-gradient-to-r from-primary-600 to-purple-600 hover:from-primary-500 hover:to-purple-500 text-white font-semibold rounded-xl cursor-grab active:cursor-grabbing whitespace-nowrap transition-all shadow-lg shadow-primary-500/30 hover:shadow-primary-500/50 transform hover:-translate-y-0.5 flex items-center justify-center"
+            title="Sürükle ve Yer İmlerine Bırak!"
+          >
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+            Sürükle & Bırak
+          </a>
+        </div>
       </div>
     </div>
   );
